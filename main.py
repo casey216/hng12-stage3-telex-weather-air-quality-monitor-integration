@@ -95,8 +95,8 @@ def get_weather_data(location: str):
 def send_message_to_telex(payload: MonitorPayload, weather_data: dict):
 
     message = f"""
-    Time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+    Time = {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
     Location: {weather_data['location']['name']}
     Temp.: {weather_data['current']['temp_c']} deg. celsius
     Condition: {weather_data['current']['condition']['text']}
