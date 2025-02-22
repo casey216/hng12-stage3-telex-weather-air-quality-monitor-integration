@@ -2,7 +2,8 @@
 
 import pytest
 from fastapi.testclient import TestClient
-from main import app, MonitorPayload, Setting  # Adjust this import based on your app structure
+from main import app, MonitorPayload, Setting
+from datetime import datetime  # Adjust this import based on your app structure
 
 client = TestClient(app)
 
@@ -21,7 +22,7 @@ def test_handle_incoming_request(mocker):
         settings=[Setting(label="location", type="text", required=True, default="london")]
     )
 
-    response = client.post("/tick", json=payload.dict())
+    response = client.post("/tick", json=payload.model_dump())
     assert response.status_code == 202
     assert mock_handle_weather_request.called
     # Verify that the correct arguments were passed to the mock
@@ -48,7 +49,7 @@ def test_weather_request(mocker):
         }
     }
 
-    mocker.patch("main.get_weather", return_value=mock_weather_data)  # Mock get_weather
+    mocker.patch("main.get_weather_data", return_value=mock_weather_data)  # Mock get_weather
     mock_post = mocker.patch("requests.post")  # Mock requests.post
 
     payload = MonitorPayload(
@@ -58,11 +59,13 @@ def test_weather_request(mocker):
     )
 
     # Send a POST request to the /tick endpoint to trigger the background task
-    response = client.post("/tick", json=payload.dict())
+    response = client.post("/tick", json=payload.model_dump())
     assert response.status_code == 202
 
     # Verify that requests.post was called with the correct data
     expected_message = f"""
+    Time: {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}
+
     Location: London
     Temp.: 15.0 deg. celsius
     Condition: Partly Cloudy
