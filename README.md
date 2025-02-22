@@ -105,7 +105,7 @@ In the left menu on your Telex dashboard:
 - You should be able to see weather info in your channel after set interval time
 
 **Message:**
-```json
+```
 Time: 2025-02-22T17:03:10
 
 Location: London
